@@ -32,11 +32,11 @@ public class UserController {
         this.emailService = emailService;
     }
 
-    @PostMapping("/register")
+    /*@PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
         userService.registerUser(request);
         return ResponseEntity.ok("User registered successfully. Please check your email to verify.");
-    }
+    }*/
 
 
     @PostMapping("/login")
