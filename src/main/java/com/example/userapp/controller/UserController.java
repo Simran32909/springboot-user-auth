@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
         userService.registerUser(request);
         return ResponseEntity.ok("User registered successfully. Please check your email to verify.");
-    }*/
+    }
 
 
     @PostMapping("/login")
@@ -47,7 +47,7 @@ public class UserController {
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-    }
+    }*/
 
     @GetMapping("/resend-verification")
     public ResponseEntity<String> resendVerification(@RequestParam String email){

@@ -1,5 +1,6 @@
 package com.example.userapp.controller;
 
+import com.example.userapp.model.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,15 @@ public class AuthController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request){
         userService.registerUser(request);
         return ResponseEntity.ok("User registered successfully. Please check your email to verify.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest){
+        try {
+            User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
+            return ResponseEntity.ok("Login successful!" + user.getFullName());
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

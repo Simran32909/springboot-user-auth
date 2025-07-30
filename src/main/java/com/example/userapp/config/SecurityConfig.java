@@ -26,7 +26,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/api/register",
                                 "/api/verify",
-                                "/api/resend-verification").permitAll()
+                                "/api/resend-verification",
+                                "api/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
