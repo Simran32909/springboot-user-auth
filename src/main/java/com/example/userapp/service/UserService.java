@@ -1,9 +1,11 @@
 package com.example.userapp.service;
 
+import com.example.userapp.model.RegisterRequest;
 import com.example.userapp.model.VerificationToken;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,24 +29,22 @@ public class UserService {
     public EmailService emailService;
 
     @Transactional
-    public void registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered!");
+    public void registerUser(@Valid RegisterRequest registerRequest) {
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already in use!");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        //return userRepository.save(user);
-
+        User user = new User();
+        user.setFullName(registerRequest.getName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEnable(false);
 
         userRepository.save(user);
 
         VerificationToken token = new VerificationToken(user);
-
         tokenRepository.save(token);
 
         String verificationLink = "http://localhost:8080/api/verify?token=" + token.getToken();
-
         emailService.sendVerificationEmail(user.getEmail(), verificationLink);
     }
 

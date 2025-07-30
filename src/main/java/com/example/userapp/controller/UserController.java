@@ -1,20 +1,20 @@
 package com.example.userapp.controller;
 
 import com.example.userapp.dto.LoginRequest;
+import com.example.userapp.model.RegisterRequest;
 import com.example.userapp.model.User;
 import com.example.userapp.model.VerificationToken;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.repository.VerificationTokenRepository;
 import com.example.userapp.service.EmailService;
 import com.example.userapp.service.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.userapp.service.UserService;
-import java.util.Optional;
 
+import java.util.Optional;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -33,13 +33,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user){
-        try {userService.registerUser(user);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
+        userService.registerUser(request);
         return ResponseEntity.ok("User registered successfully. Please check your email to verify.");
-    } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest){
