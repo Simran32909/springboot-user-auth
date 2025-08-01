@@ -1,7 +1,9 @@
 package com.example.userapp.service;
 
+import com.example.userapp.model.PasswordResetToken;
 import com.example.userapp.model.RegisterRequest;
 import com.example.userapp.model.VerificationToken;
+import com.example.userapp.repository.PasswordResetTokenRepository;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.repository.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
@@ -15,6 +17,8 @@ import com.example.userapp.model.User;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
@@ -58,6 +62,17 @@ public class UserService {
             throw new RuntimeException("User not verified!");
         }
         return user;
+    }
+
+    @Transactional
+    public void sendPasswordResetEmail(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("User not found!"));
+        PasswordResetToken resetToken = new PasswordResetToken(user);
+        passwordResetTokenRepository.save(resetToken);
+
+        String resetLink = "http://localhost:8080/api/resend-verification?email=" + user.getEmail();
+        emailService.sendVerificationEmail(user.getEmail(), resetLink);
     }
 
 }
